@@ -2,6 +2,19 @@
   text-align: center;
 }
 
+.navLink{
+  text-decoration: none;
+  color: black; 
+  outline: none
+}
+
+.background{
+  background-image: url("./background.jpeg");
+  background-position: center;
+  padding: 30px 20px;
+  color: white
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
