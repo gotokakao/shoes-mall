@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import logo from './logo.svg';
 import './App.css';
 import { Button,Navbar, Container, Nav, NavDropdown} from 'react-bootstrap';
@@ -6,13 +6,18 @@ import shoesData from "./Data.js";
 import {Link, Route, Switch} from "react-router-dom";
 import Detail from "./Detail";
 import axios from "axios";
+import Cart from "./Cart.js";
+
+
+export const stockContext = React.createContext();
 
 
 function App() {
 
   const [shoes, shoesFunc] = useState(shoesData);
   const [shoesIndex, shoesIndexFunc] = useState(0)
-  const [stock, stockChange] = useState([10,10,10]);
+  const [stock, stockChange] = useState([10,11,12]);
+  
 
   /*
   const addShoesList= (data) => {
@@ -26,7 +31,7 @@ function App() {
     <div className="App">
        <Navbar bg="light" expand="lg">
         <Container>
-          <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
+          <Navbar.Brand href="#home">Shoes Store</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
@@ -53,19 +58,24 @@ function App() {
             <p>This is all your shoes loose come on and get somes!!</p>
           </div>
 
-          <div className="container">
-          <div className="row">
-            {
-              shoes.map((shoe, i)=>{
-                return(
-                  <ShoesList shoeData={shoes[i]} i={i} key={i}></ShoesList>
-                )
-              })
-            }
-          </div>
-
           
 
+        <div className="container">
+          <stockContext.Provider value={stock}>
+            <div className="row">
+              {
+                shoes.map((shoe, i)=>{
+                  return(
+                    <a href={`detail/${i}`}>
+                      <ShoesList shoeData={shoes[i]} i={i} key={i}></ShoesList>
+                    </a>
+                  )
+                })
+              }
+            </div>
+          </stockContext.Provider>
+
+        
         </div>
 
         <button className="btn btn-primary" onClick={ ()=>{
@@ -92,26 +102,42 @@ function App() {
         </Route>
 
         <Route path="/detail/:id">
-            <Detail shoes={shoes} stock={stock} stockChange={stockChange}></Detail>
+            <stockContext.Provider value={stock}>
+              <Detail shoes={shoes} stock={stock} stockChange={stockChange}></Detail>
+            </stockContext.Provider>
+        </Route>
+
+        <Route path="/cart">
+          <Cart></Cart>
         </Route>
 
       </Switch>
 
-      
+
     </div>
     
   );
 }
 
+
+
 function ShoesList(props){
+
+  const stock = useContext(stockContext);
   return(
     <div className="col-md-4">
       <img src={"https://codingapple1.github.io/shop/shoes"+ (props.i + 1) +".jpg"} width="100%"></img>
       <h4>{props.shoeData.title}</h4>
       <p>{props.shoeData.content}</p>
       <p>{props.shoeData.price}</p>
+      <Test i={props.i}></Test>
   </div>
   );
+}
+
+function Test(props){
+  const stock = useContext(stockContext);
+  return <p>재고 : {stock[props.i]}</p>
 }
 
 export default App;

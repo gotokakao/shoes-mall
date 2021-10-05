@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {useHistory, useParams} from "react-router-dom";
 import styled from "styled-components";
 import "./Detail.scss";
+import {stockContext} from "./App.js";
+import { CSSTransition } from "react-transition-group";
+import {Nav,} from 'react-bootstrap';
 
 let box = styled.div`
     padding-top : 30px;
@@ -14,8 +17,13 @@ let ulala = styled.h4`
 
 function Detail(props){
 
+    const stock = useContext(stockContext);
+
     const [alert, alertChange] = useState(true);
     const [inputData, inputDataChange] = useState("");
+    let [tab, tabChange] = useState(0);
+    let [tabSwitch, tabSwitchChange] = useState(false);
+
 
     useEffect(()=>{
         const timer = setTimeout(() => {
@@ -59,7 +67,7 @@ function Detail(props){
                     <h4 className="pt-5">{findShoes.title}</h4>
                     <p>{findShoes.content}</p>
                     <p>{findShoes.price}</p>
-                    <Stock stock={props.stock} id={id}></Stock>
+                    <Stock stock={stock} id={id}></Stock>
                     
                     <button className="btn btn-danger" onClick={()=>{
                         let newStock = [...props.stock];
@@ -72,10 +80,37 @@ function Detail(props){
                     }} className="btn btn-danger">뒤로가기</button> 
                 </div>
             </div>
+
+            <Nav className="mt-5" variant="tabs" defaultActiveKey="link-0">
+                <Nav.Item>
+                <Nav.Link eventKey="link-0" onClick={ ()=>{tabSwitchChange(false); tabChange(0)} }>상품설명</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                <Nav.Link eventKey="link-1" onClick={ ()=>{tabSwitchChange(false); tabChange(1)} }>배송정보</Nav.Link>
+                </Nav.Item>
+            </Nav>
+
+            <CSSTransition in={tabSwitch} classNames="wow" timeout={500}>
+                <TabContent tab={tab} tabSwitchChange={tabSwitchChange}></TabContent>
+            </CSSTransition>
         </div> 
     )
 
 }
+
+function TabContent(props){
+
+    useEffect(()=>{
+        props.tabSwitchChange(true);
+    });
+
+    const {tab} = props;
+    if(tab === 0){
+      return <div>0번째 입니다.</div>
+    }else if(tab === 1){
+      return <div>1번째 입니다.</div>
+    }
+  }
 
 function Stock(props){
     return(

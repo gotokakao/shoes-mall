@@ -2,6 +2,15 @@
 
 $mainColor : black;
 
+.wow-enter{
+    opacity: 0;
+}
+
+.wow-enter-active{
+    opacity: 1;
+    transition: all 500ms;
+}
+
 @mixin hamsu(){
     background : #eeeeee;
     padding : 15px;
