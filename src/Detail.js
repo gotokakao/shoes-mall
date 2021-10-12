@@ -5,6 +5,7 @@ import "./Detail.scss";
 import {stockContext} from "./App.js";
 import { CSSTransition } from "react-transition-group";
 import {Nav,} from 'react-bootstrap';
+import { connect } from "react-redux";
 
 let box = styled.div`
     padding-top : 30px;
@@ -71,10 +72,13 @@ function Detail(props){
                     
                     <button className="btn btn-danger" onClick={()=>{
                         let newStock = [...props.stock];
-                        console.log(newStock[id]);
                         newStock[id] = newStock[id] -1;
                         props.stockChange(newStock)
-                    }}>주문하기</button> 
+
+                        props.dispatch({type : "addItem", payload : {id:findShoes.id, name : findShoes.title, quan : 1}});
+                        history.push("/cart");
+                        }}>주문하기
+                    </button> 
                     <button onClick={ ()=>{
                         history.goBack();
                     }} className="btn btn-danger">뒤로가기</button> 
@@ -118,4 +122,10 @@ function Stock(props){
     )
 }
 
-export default Detail;
+function getStore(state){
+    return{
+        state : state.reducer
+    }
+}
+
+export default connect(getStore)(Detail);

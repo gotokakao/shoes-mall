@@ -17,21 +17,39 @@ function reducerAlert(state = true, action){
 }
 
 let defaultValue = [
+  /*
   {id:0, name : "Nike dunk", quan : 2}, 
   {id:1, name : "Adidas yeezy boost", quan : 4}
+  */
 ];
 
 function reducer(state = defaultValue, action){
-  if(action.type === "increase quan"){
+  if(action.type === "addItem"){
+
+    let found = state.findIndex((a)=>{return a.id === action.payload.id})
+
+    if(found >= 0){
+      let newArr = [...state];
+      newArr[found].quan++;
+      return newArr;
+    }
+    else{
+      let newArr = [...state];
+      newArr.push(action.payload);
+      return newArr;
+    }
+    
+  }
+  else if(action.type === "increase quan"){
     let newArr = [...state];
-    newArr[0].quan++;
+    newArr[action.data].quan++;
     return newArr;
   }else if(action.type === "decrease quan"){
     let newArr = [...state];
-    if(newArr[0].quan === 0){
+    if(newArr[action.data].quan === 0){
       return newArr
     }
-    newArr[0].quan--;
+    newArr[action.data].quan--;
     return newArr
   }else{
     return state;

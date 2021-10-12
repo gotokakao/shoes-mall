@@ -1,16 +1,16 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useState, lazy, Suspense} from "react";
 import logo from './logo.svg';
 import './App.css';
 import { Button,Navbar, Container, Nav, NavDropdown} from 'react-bootstrap';
 import shoesData from "./Data.js";
-import {Link, Route, Switch} from "react-router-dom";
-import Detail from "./Detail";
+import {Link, Route, Switch, useHistory} from "react-router-dom";
+
 import axios from "axios";
 import Cart from "./Cart.js";
 
-
 export const stockContext = React.createContext();
 
+let Detail = lazy(()=> import("./Detail.js") );
 
 function App() {
 
@@ -66,9 +66,9 @@ function App() {
               {
                 shoes.map((shoe, i)=>{
                   return(
-                    <a href={`detail/${i}`}>
+ 
                       <ShoesList shoeData={shoes[i]} i={i} key={i}></ShoesList>
-                    </a>
+                
                   )
                 })
               }
@@ -103,7 +103,9 @@ function App() {
 
         <Route path="/detail/:id">
             <stockContext.Provider value={stock}>
-              <Detail shoes={shoes} stock={stock} stockChange={stockChange}></Detail>
+              <Suspense fallback={<div>Loading...</div>}>
+                <Detail shoes={shoes} stock={stock} stockChange={stockChange}></Detail>
+              </Suspense>    
             </stockContext.Provider>
         </Route>
 
@@ -124,8 +126,10 @@ function App() {
 function ShoesList(props){
 
   const stock = useContext(stockContext);
+  const history = useHistory();
+
   return(
-    <div className="col-md-4">
+    <div className="col-md-4" onClick={()=>{history.push(`detail/`+props.shoeData.id)}}>
       <img src={"https://codingapple1.github.io/shop/shoes"+ (props.i + 1) +".jpg"} width="100%"></img>
       <h4>{props.shoeData.title}</h4>
       <p>{props.shoeData.content}</p>
